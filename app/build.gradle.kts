@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
 }
 
 android {
@@ -40,6 +41,21 @@ android {
 }
 
 dependencies {
+
+    // Room - ORM.
+    implementation("androidx.room:room-ktx:2.8.0")
+    kapt("androidx.room:room-compiler:2.8.0")
+
+    // ViewModel para Jetpack Compose.
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation("androidx.activity:activity-compose:1.11.0")
+
+    // Navigation de pantallas con Jetpack Compose.
+    implementation("androidx.navigation:navigation-compose:2.9.4")
+
+    //Bcrypt para la seguridad de las contraseñas.
+    implementation("org.mindrot:jbcrypt:0.4")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
