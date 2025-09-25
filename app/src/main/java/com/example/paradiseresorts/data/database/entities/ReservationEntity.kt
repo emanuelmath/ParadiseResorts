@@ -5,8 +5,8 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity("reservation", foreignKeys = [
-    ForeignKey(RoomEntity::class, parentColumns = ["id"], childColumns = ["roomId"]),
-    ForeignKey(UserEntity::class, parentColumns = ["dui"], childColumns = ["dui"])
+    ForeignKey(RoomEntity::class, parentColumns = ["id"], childColumns = ["roomId"], onDelete = ForeignKey.CASCADE),
+    ForeignKey(UserEntity::class, parentColumns = ["dui"], childColumns = ["dui"], onDelete = ForeignKey.CASCADE),
 ])
 data class ReservationEntity(
     @PrimaryKey(autoGenerate = true)

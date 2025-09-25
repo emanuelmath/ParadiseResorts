@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity("transaction", foreignKeys = [
-    ForeignKey(UserEntity::class, parentColumns = ["dui"], childColumns = ["dui"])
+    ForeignKey(UserEntity::class, parentColumns = ["dui"], childColumns = ["dui"], onDelete = ForeignKey.CASCADE)
 ])
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)

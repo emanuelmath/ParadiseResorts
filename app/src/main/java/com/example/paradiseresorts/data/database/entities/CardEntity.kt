@@ -13,10 +13,9 @@ import com.example.paradiseresorts.data.database.entities.*
 )])
 data class CardEntity(
     @PrimaryKey
-    val codigo: String,
+    val code: String,
     val expirationDate: String,
     val cvv: Int,
     val dui: String,
     var balance: Double = 2000.00 // Ver si se baja luego.
-
 )
