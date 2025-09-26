@@ -11,11 +11,10 @@ interface UserDao {
     @Query("SELECT * FROM user WHERE dui = :dui")
     suspend fun getUserByDUI(dui: String): UserEntity?
 
-    @Query("SELECT * FROM user WHERE email = :email AND password = :password")
-    suspend fun getUserForLogin(email: String, password: String): UserEntity?
+    @Query("SELECT * FROM user WHERE email = :email")
+    suspend fun getUserByEmail(email: String): UserEntity?
 
     @Insert
     suspend fun createUser(user: UserEntity): Long
-
 
 }

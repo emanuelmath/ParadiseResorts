@@ -11,6 +11,7 @@ data class TransactionEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val dui: String,
+    val acquiredService: String,
     val transactionDate: String,
     val amount: Double
 ) {

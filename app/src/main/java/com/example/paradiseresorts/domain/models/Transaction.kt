@@ -4,6 +4,7 @@ data class Transaction(
     val id: Int,
     val dui: String,
     val transactionDate: String,
+    val acquiredService: String,
     val amount: Double
 ) {
 }

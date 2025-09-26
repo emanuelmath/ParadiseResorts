@@ -14,11 +14,12 @@ interface RoomDao {
     suspend fun getAllRoomsAvailable(): List<RoomEntity>?
 
     @Query("UPDATE room SET isReserved = 0 WHERE id = :id")
-    suspend fun setRoomTAvailable(id: Int)
+    suspend fun setRoomAvailable(id: Int)
 
+    @Query("UPDATE room SET isReserved = 1 WHERE id = :id")
+    suspend fun setRoomNotAvailable(id: Int)
     @Insert
     suspend fun insertRoom(room: RoomEntity): Long
-
     @Query("DELETE FROM room")
     suspend fun deleteAllRooms()
 }
