@@ -17,12 +17,14 @@ import com.example.paradiseresorts.ui.screens.session.LoginScreen
 import com.example.paradiseresorts.ui.screens.session.LoginViewModel
 import com.example.paradiseresorts.ui.screens.session.RegisterScreen
 import com.example.paradiseresorts.ui.screens.session.RegisterViewModel
+import com.example.paradiseresorts.ui.screens.splash.SplashViewModel
 
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     loginViewModel: LoginViewModel,
-    registerViewModel: RegisterViewModel
+    registerViewModel: RegisterViewModel,
+    splashViewModel: SplashViewModel
 ) {
     val scope = rememberCoroutineScope()
     val appColors = AppColors()
@@ -37,6 +39,17 @@ fun AppNavHost(
         //Pantalla de carga:
         composable(route = Screen.Splash.route) {
             SplashScreen(
+                splashViewModel = splashViewModel,
+                onSessionActive = {
+                    navController.navigate(route = Screen.Home.route) {
+                        popUpTo(id = 0) {inclusive = true}
+                    }
+                },
+                onSessionRequired = {
+                    navController.navigate(route = Screen.Start.route) {
+                        popUpTo(id = 0) {inclusive = true}
+                    }
+                },
                 navController = navController,
                 splashTime = 3000L
             )

@@ -2,7 +2,6 @@
 package com.example.paradiseresorts.ui.screens.splash
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Animation
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import com.example.paradiseresorts.R
@@ -30,19 +29,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.paradiseresorts.ui.components.AppColors
 import com.example.paradiseresorts.ui.navigation.Screen
 import com.example.paradiseresorts.ui.theme.LocalAppColors
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
+    splashViewModel: SplashViewModel,
+    onSessionActive: () -> Unit,
+    onSessionRequired: () -> Unit,
     navController: NavHostController,
     splashTime: Long = 3000L
 ) {
@@ -74,7 +72,7 @@ fun SplashScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),//icono_palmera),
+                    painter = painterResource(id = R.drawable.icono_palmera),
                     contentDescription = "Icono de palmera",
                     modifier = Modifier
                         .size(size = 120.dp)
@@ -105,17 +103,16 @@ fun SplashScreen(
     }
 
     //Navegación hacia la siguiente pantalla:
-    LaunchedEffect(key1 = Unit) {
-        delay(timeMillis = splashTime)
-
-        navController.navigate(route = Screen.Start.route)
+    LaunchedEffect(Unit) {
+        delay(splashTime)
+        splashViewModel.checkSession { hasSession ->
+            if (hasSession) {
+                onSessionActive()
+                navController.navigate(Screen.Home.route)
+            } else {
+                onSessionRequired()
+                navController.navigate(Screen.Start.route)
+            }
+        }
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun SplashScreenPreview() {
-    val fakeColors = AppColors()
-    val navController = rememberNavController()
-    SplashScreen(navController = navController)
 }

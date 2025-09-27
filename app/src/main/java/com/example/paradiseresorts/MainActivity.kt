@@ -19,12 +19,17 @@ import com.example.paradiseresorts.ui.screens.session.LoginViewModel
 import com.example.paradiseresorts.ui.screens.session.LoginViewModelFactory
 import com.example.paradiseresorts.ui.screens.session.RegisterViewModel
 import com.example.paradiseresorts.ui.screens.session.RegisterViewModelFactory
+import com.example.paradiseresorts.ui.screens.splash.SplashViewModel
+import com.example.paradiseresorts.ui.screens.splash.SplashViewModelFactory
 import com.example.paradiseresorts.ui.theme.ParadiseResortsTheme
 
-class MainActivity : ComponentActivity() { lateinit var loginViewModel: LoginViewModel
-    private set
+class MainActivity : ComponentActivity() {
 
+    lateinit var loginViewModel: LoginViewModel
+    private set
     lateinit var registerViewModel: RegisterViewModel
+        private set
+    lateinit var splashViewModel: SplashViewModel
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,22 +45,39 @@ class MainActivity : ComponentActivity() { lateinit var loginViewModel: LoginVie
             this,
             RegisterViewModelFactory()
         )[RegisterViewModel::class.java]
+        splashViewModel = ViewModelProvider(
+            this,
+            SplashViewModelFactory()
+        )[SplashViewModel::class.java]
 
         enableEdgeToEdge()
         setContent {
             ParadiseResortsTheme {
-                ParadiseResortsApplication(loginViewModel, registerViewModel)
+                ParadiseResortsApplication(
+                    loginViewModel,
+                    registerViewModel,
+                    splashViewModel
+                )
             }
         }
     }
 }
 
 @Composable
-fun ParadiseResortsApplication(loginViewModel: LoginViewModel, registerViewModel: RegisterViewModel) {
+fun ParadiseResortsApplication(
+    loginViewModel: LoginViewModel,
+    registerViewModel: RegisterViewModel,
+    splashViewModel: SplashViewModel
+) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    AppNavHost(navController, loginViewModel, registerViewModel)
+    AppNavHost(
+        navController,
+        loginViewModel,
+        registerViewModel,
+        splashViewModel
+    )
 }
 
 @Composable
