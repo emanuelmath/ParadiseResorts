@@ -13,6 +13,6 @@ interface CardDao {
     @Query("SELECT * FROM card WHERE code = :code AND cvv = :cvv AND dui = :dui")
     suspend fun verifyCard(code: String, cvv: Int, dui: String): CardEntity?
 
-    @Query("SELECT code FROM card WHERE DATE(expirationDate) < DATE(:todayDate)")
-    suspend fun verifyCurrentCardIsAvailable(todayDate: String): String?
+    @Query("SELECT code FROM card WHERE DATE(expirationDate) < DATE(:todayDate) AND code = :code")
+    suspend fun verifyCurrentCardIsAvailable(todayDate: String, code: String): String?
 }

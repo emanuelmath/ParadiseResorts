@@ -9,7 +9,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
+import com.example.paradiseresorts.ui.components.AppColors
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -33,6 +36,8 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val LocalAppColors = staticCompositionLocalOf { AppColors() }
+
 @Composable
 fun ParadiseResortsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -48,6 +53,15 @@ fun ParadiseResortsTheme(
 
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
+    }
+
+    val appColors = AppColors()
+    CompositionLocalProvider(LocalAppColors provides appColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
     }
 
     MaterialTheme(

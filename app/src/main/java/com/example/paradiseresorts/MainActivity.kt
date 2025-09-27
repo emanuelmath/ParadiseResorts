@@ -10,24 +10,52 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.rememberNavController
+import com.example.paradiseresorts.ui.navigation.AppNavHost
+import com.example.paradiseresorts.ui.screens.session.LoginViewModel
+import com.example.paradiseresorts.ui.screens.session.LoginViewModelFactory
+import com.example.paradiseresorts.ui.screens.session.RegisterViewModel
+import com.example.paradiseresorts.ui.screens.session.RegisterViewModelFactory
 import com.example.paradiseresorts.ui.theme.ParadiseResortsTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() { lateinit var loginViewModel: LoginViewModel
+    private set
+
+    lateinit var registerViewModel: RegisterViewModel
+        private set
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inicialización de los ViewModels
+        loginViewModel = ViewModelProvider(
+            this,
+            LoginViewModelFactory()
+        )[LoginViewModel::class.java]
+
+        registerViewModel = ViewModelProvider(
+            this,
+            RegisterViewModelFactory()
+        )[RegisterViewModel::class.java]
+
         enableEdgeToEdge()
         setContent {
             ParadiseResortsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                ParadiseResortsApplication(loginViewModel, registerViewModel)
             }
         }
     }
+}
+
+@Composable
+fun ParadiseResortsApplication(loginViewModel: LoginViewModel, registerViewModel: RegisterViewModel) {
+    val navController = rememberNavController()
+    val context = LocalContext.current
+
+    AppNavHost(navController, loginViewModel, registerViewModel)
 }
 
 @Composable

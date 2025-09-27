@@ -14,7 +14,7 @@ class CardRepository(private val cardDao: CardDao) {
         return cardDao.verifyCard(code, cvv, dui)?.toModel()
     }
 
-    suspend fun verifyCurrentCardIsAvailable(todayDate: String): String? {
-        return cardDao.verifyCurrentCardIsAvailable(todayDate)
+    suspend fun verifyCurrentCardIsAvailable(todayDate: String, code: String): String? {
+        return cardDao.verifyCurrentCardIsAvailable(todayDate, code)
     }
 }

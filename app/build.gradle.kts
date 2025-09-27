@@ -57,6 +57,12 @@ dependencies {
     implementation("org.mindrot:jbcrypt:0.4")
 
 
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    //Íconos
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
