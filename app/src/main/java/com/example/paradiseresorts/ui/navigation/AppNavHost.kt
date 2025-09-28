@@ -3,14 +3,17 @@ package com.example.paradiseresorts.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.paradiseresorts.ui.components.AppColors
-import com.example.paradiseresorts.ui.navigation.Screen
+import com.example.paradiseresorts.ui.screens.feedback.FeedbackScreen
 import com.example.paradiseresorts.ui.screens.home.HomeScreen
+import com.example.paradiseresorts.ui.screens.information.InformationScreen
+import com.example.paradiseresorts.ui.screens.profile.ProfileScreen
+import com.example.paradiseresorts.ui.screens.reservation.ReservationScreen
+import com.example.paradiseresorts.ui.screens.services.ServicesScreen
 import com.example.paradiseresorts.ui.screens.splash.SplashScreen
 import com.example.paradiseresorts.ui.screens.start.StartScreen
 import com.example.paradiseresorts.ui.screens.session.LoginScreen
@@ -109,32 +112,40 @@ fun AppNavHost(
 
         //Pantalla de Home:
         composable(route = Screen.Home.route) {
-            HomeScreen(navController)
+            HomeScreen(
+                navController = navController
+            )
         }
 
         //Pantalla de Perfil de usuario:
         composable(route = Screen.Profile.route) {
-
+            ProfileScreen(
+                onLogoutClick = {
+                    navController.navigate(route = Screen.Start.route) {
+                        popUpTo(id = 0) { inclusive = true }
+                    }
+                }
+            )
         }
 
         //Pantalla de Reservaciones / Hacer reservaciones:
         composable(route = Screen.Reservation.route) {
-
+            ReservationScreen()
         }
 
         //Pantalla de Información de hoteles:
         composable(route = Screen.Information.route) {
-
+            InformationScreen()
         }
 
         //Pantalla de Feedback y valoraciones de usuarios:
         composable(route = Screen.Feedback.route) {
-
+            FeedbackScreen()
         }
 
         //Pantalla de servicios extras:
         composable(route = Screen.Services.route) {
-
+            ServicesScreen()
         }
     }
 }
