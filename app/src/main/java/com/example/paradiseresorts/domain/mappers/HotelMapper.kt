@@ -6,13 +6,15 @@ import com.example.paradiseresorts.domain.models.Hotel
 fun Hotel.toEntity(): HotelEntity {
     return HotelEntity(
         id = id,
-        name = name
+        name = name,
+        location = location
     )
 }
 
 fun HotelEntity.toModel(): Hotel {
     return Hotel(
         id = id,
-        name = name
+        name = name,
+        location = location
     )
 }

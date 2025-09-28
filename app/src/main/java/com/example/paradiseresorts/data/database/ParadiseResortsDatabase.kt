@@ -5,11 +5,12 @@ import androidx.room.RoomDatabase
 import com.example.paradiseresorts.data.database.dao.*
 import com.example.paradiseresorts.data.database.entities.*
 
-@Database(entities = [CardEntity::class, HotelEntity::class, ReservationEntity::class,
+@Database(entities = [CardEntity::class, FeedbackEntity::class,HotelEntity::class, ReservationEntity::class,
     RoomEntity::class, ServiceEntity::class, SessionEntity::class, TransactionEntity::class,
-    UserEntity::class], version = 1)
+    UserEntity::class], version = 2) //1- Versión Inicial de la BD. 2- Algunos campos unique y se agregó la tabla feedback.
 abstract class ParadiseResortsDatabase : RoomDatabase() {
     abstract fun CardDao(): CardDao
+    abstract fun FeedbackDao(): FeedbackDao
     abstract fun HotelDao(): HotelDao
     abstract fun ReservationDao(): ReservationDao
     abstract fun RoomDao(): RoomDao
