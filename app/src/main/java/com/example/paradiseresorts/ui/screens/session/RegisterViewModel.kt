@@ -8,14 +8,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paradiseresorts.data.repository.CardRepository
+import com.example.paradiseresorts.data.repository.UserRepository
+import com.example.paradiseresorts.domain.models.Card
+import com.example.paradiseresorts.domain.models.User
 import com.example.paradiseresorts.ui.classes.CardInfo
 import com.example.paradiseresorts.ui.classes.RegisterUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.mindrot.jbcrypt.BCrypt
 import java.time.LocalDate
 import java.time.Period
 
-class RegisterViewModel(/*Introducir repositorios a utilizar*/): ViewModel() {
+class RegisterViewModel(private val userRepository: UserRepository,
+    private val cardRepository: CardRepository): ViewModel() {
 
     companion object {
         private const val TAG = "RegisterVM"
@@ -50,7 +56,8 @@ class RegisterViewModel(/*Introducir repositorios a utilizar*/): ViewModel() {
                     // (Simulación) Esperar tiempo para validar si el DUI ya está registrado
                     uiState = uiState.copy(isLoading = true)
                     delay(1000)
-                    if (uiState.dui == "123456789") {
+                    val user = userRepository.getUserByDUI(uiState.dui)
+                    if (user != null) {
                         uiState = uiState.copy(isLoading = false, errorMessage = "DUI ya registrado")
                     } else {
                         uiState = uiState.copy(isLoading = false, errorMessage = null)
@@ -122,26 +129,57 @@ class RegisterViewModel(/*Introducir repositorios a utilizar*/): ViewModel() {
                 8 -> {
                     if (!uiState.acceptTerms) {
                         uiState = uiState.copy(errorMessage = "Debes aceptar los términos")
-                    } else onValid()
+                    } else {
+                        onValid()
+                        val userToCreate: User = User(
+                            dui = uiState.dui,
+                            name = uiState.name,
+                            lastName = uiState.lastName,
+                            email = uiState.email,
+                            password = BCrypt.hashpw(uiState.password, BCrypt.gensalt()),
+                            dateOfBirthday = uiState.dateOfBirth,
+                            phoneNumber = uiState.phoneNumber,
+                            balance = 0.0
+                        )
+                        userRepository.createUser(userToCreate)
+                        if(uiState.cardInfo != null) {
+                            val cardToCreate = Card(
+                                code = uiState.cardInfo!!.code,
+                                expirationDate = uiState.cardInfo!!.expirationDate,
+                                cvv = uiState.cardInfo!!.cvv,
+                                dui = uiState.cardInfo!!.dui
+                            )
+                            cardRepository.createCard(cardToCreate)
+                        }
+                    }
                 }
             }
         }
     }
 
     //Función de añadir tarjeta
-    fun onCardAdded(number: String, holder: String, expiry: String, cvv: String) {
+    fun onCardAdded(code: String, expirationDate: String, cvv: String) {
 
-        /* Añadir lógica de ingreso de tarjeta */
+        //viewModelScope.launch {
+            uiState = uiState.copy(
+                cardInfo = CardInfo(
+                    code = code,
+                    expirationDate = expirationDate,
+                    dui = uiState.dui,
+                    cvv = cvv
+                ),
+                errorMessage = null
+            )
+            val cardToCreate = Card(
+                code = uiState.cardInfo!!.code,
+                expirationDate = uiState.cardInfo!!.expirationDate,
+                cvv = uiState.cardInfo!!.cvv,
+                dui = uiState.cardInfo!!.dui
+            )
 
-        uiState = uiState.copy(
-            cardInfo = CardInfo(
-                number = number,
-                holder = holder,
-                expiry = expiry,
-                cvv = cvv
-            ),
-            errorMessage = null
-        )
+        //cardRepository.createCard(cardToCreate)
+        //}
+        //Poner validaciones para el tiempo, si el uiState no se actualizó, se tarda mucho, etc...
     }
 
     // Función de registro final:

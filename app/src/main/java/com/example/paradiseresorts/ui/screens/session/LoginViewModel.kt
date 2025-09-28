@@ -7,21 +7,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paradiseresorts.data.repository.SessionRepository
+import com.example.paradiseresorts.data.repository.UserRepository
+import com.example.paradiseresorts.domain.models.Session
 import kotlinx.coroutines.launch
 import com.example.paradiseresorts.ui.classes.LoginUiState
 import kotlinx.coroutines.delay
+import org.mindrot.jbcrypt.BCrypt
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(private val userRepository: UserRepository,
+                     private val sessionRepository: SessionRepository) : ViewModel() {
 
     companion object {
         private const val TAG = "LoginVM"
 
-        // Usuario de prueba
+        /*// Usuario de prueba
         private const val TEST_USERNAME = "admin"
         private const val TEST_EMAIL = "admin@gmail.com"
-        private const val TEST_PASSWORD = "12345678"
+        private const val TEST_PASSWORD = "12345678"*/
     }
-
     var uiState by mutableStateOf(LoginUiState())
         private set
 
@@ -45,22 +53,37 @@ class LoginViewModel : ViewModel() {
                 delay(1000)
 
                 // Validación contra usuario de prueba
-                val matchesAdmin = (
-                        (uiState.usernameOrEmail == TEST_USERNAME || uiState.usernameOrEmail == TEST_EMAIL) &&
-                                uiState.password == TEST_PASSWORD
-                        )
+                //val matchesAdmin = (
+                //        (uiState.usernameOrEmail == TEST_USERNAME || uiState.usernameOrEmail == TEST_EMAIL) &&
+                //                uiState.password == TEST_PASSWORD
+                //        )
 
-                if (matchesAdmin) {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        isLoggedIn = true,
-                        errorMessage = null
-                    )
+                val user = userRepository.getUserByEmail(uiState.usernameOrEmail)
+
+                if (user != null) {
+                    if(BCrypt.checkpw(uiState.password, user.password)) {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            isLoggedIn = true,
+                            errorMessage = null
+                        )
+                        val sessionToCreate = Session(
+                            dui = user.dui,
+                            sessionDate = getTodayDateString()
+                        )
+                        sessionRepository.createSession(sessionToCreate)
+                    } else {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            isLoggedIn = false,
+                            errorMessage = "Contraseña incorrecta."
+                        )
+                    }
                 } else {
                     uiState = uiState.copy(
                         isLoading = false,
                         isLoggedIn = false,
-                        errorMessage = "Usuario o contraseña incorrectos"
+                        errorMessage = "Usuario no existente."
                     )
                 }
 
@@ -85,5 +108,11 @@ class LoginViewModel : ViewModel() {
 
     fun clearError() {
         uiState = uiState.copy(errorMessage = null)
+    }
+
+    fun getTodayDateString(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        formatter.timeZone = TimeZone.getDefault()
+        return formatter.format(Date())
     }
 }

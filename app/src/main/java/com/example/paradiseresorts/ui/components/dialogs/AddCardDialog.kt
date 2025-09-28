@@ -18,18 +18,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AddCardDialog(
     onDismiss: () -> Unit,
-    onSave: (String, String, String, String) -> Unit
+    onSave: (String, String, String) -> Unit
 ) {
-    var cardNumber by remember { mutableStateOf("") }
-    var cardHolder by remember { mutableStateOf("") }
-    var expiryDate by remember { mutableStateOf("") }
+    var cardCode by remember { mutableStateOf("") }
+    var expirationDate by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onSave(cardNumber, cardHolder, expiryDate, cvv)
+                onSave(cardCode, expirationDate, cvv)
                 onDismiss()
             }) { Text("Guardar") }
         },
@@ -40,22 +39,22 @@ fun AddCardDialog(
         text = {
             Column {
                 OutlinedTextField(
-                    value = cardNumber,
-                    onValueChange = { cardNumber = it },
+                    value = cardCode,
+                    onValueChange = { cardCode = it },
                     label = { Text("Número de tarjeta") },
                     singleLine = true
                 )
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
+                /*OutlinedTextField(
                     value = cardHolder,
                     onValueChange = { cardHolder = it },
                     label = { Text("Nombre del titular") },
                     singleLine = true
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(8.dp))*/
                 OutlinedTextField(
-                    value = expiryDate,
-                    onValueChange = { expiryDate = it },
+                    value = expirationDate,
+                    onValueChange = { expirationDate = it },
                     label = { Text("Fecha de expiración (MM/AA)") },
                     singleLine = true
                 )

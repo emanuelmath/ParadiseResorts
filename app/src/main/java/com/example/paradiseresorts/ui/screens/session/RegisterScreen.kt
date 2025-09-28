@@ -185,8 +185,8 @@ fun RegisterScreen(
                                 onValueChange = registerViewModel::onPhoneNumberChange,
                                 keyboardType = KeyboardType.Number
                             )
-                            7 -> AddCardStep { number, holder, expiry, cvv ->
-                                registerViewModel.onCardAdded(number, holder, expiry, cvv)
+                            7 -> AddCardStep { code, expirationDate, cvv ->
+                                registerViewModel.onCardAdded(code, expirationDate, cvv)
                             }
                             8 -> FinalStep(
                                 acceptTerms = uiState.acceptTerms,
@@ -364,7 +364,7 @@ fun DatePickerStep(
 //Composable para estructurar el dialog de tarjeta. Este viene de ui.components
 @Composable
 fun AddCardStep(
-    onAddCard: (String, String, String, String) -> Unit
+    onAddCard: (String, String, String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -387,8 +387,8 @@ fun AddCardStep(
         if (showDialog) {
             AddCardDialog(
                 onDismiss = { showDialog = false },
-                onSave = { number, holder, expiry, cvv ->
-                    onAddCard(number, holder, expiry, cvv)
+                onSave = { code, expirationDate, cvv ->
+                    onAddCard(code, expirationDate, cvv)
                 }
             )
         }

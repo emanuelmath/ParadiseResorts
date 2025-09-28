@@ -11,6 +11,9 @@ interface SessionDao {
     @Insert
     suspend fun createSession(session: SessionEntity): Long
 
+    @Query("SELECT * FROM session LIMIT 1")
+    suspend fun obtainCurrentSession(): SessionEntity?
+
     @Query("DELETE FROM session WHERE dui = :dui")
     suspend fun deleteSessionUser(dui: String)
 

@@ -19,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ fun SplashScreen(
 ) {
     val appColors = LocalAppColors.current
     val alpha = remember { Animatable(initialValue = 0f) }
+    val uiState = remember { mutableStateOf(splashViewModel.uiState) }
 
     //Controlador para la animación 'fade in'
     LaunchedEffect(Unit) {
@@ -109,6 +111,7 @@ fun SplashScreen(
             if (hasSession) {
                 onSessionActive()
                 navController.navigate(Screen.Home.route)
+                //uiState.value.duiSession -> pasar como param para nevgar a /home/dui
             } else {
                 onSessionRequired()
                 navController.navigate(Screen.Start.route)

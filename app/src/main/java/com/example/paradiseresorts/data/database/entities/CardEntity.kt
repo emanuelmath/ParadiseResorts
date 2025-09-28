@@ -15,7 +15,7 @@ data class CardEntity(
     @PrimaryKey
     val code: String,
     val expirationDate: String,
-    val cvv: Int,
+    val cvv: String,
     val dui: String,
     var balance: Double = 2000.00 // Ver si se baja luego.
 )

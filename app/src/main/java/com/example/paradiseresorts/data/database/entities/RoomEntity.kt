@@ -5,11 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity("room")
 data class RoomEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     val id: Int = 0,
     val name: String,
     val price: Double,
     val hotelId: Int,
     val category: String,
-    var isReserved: Boolean = false //Ver si se pasa a int por los TypeConverters.
+    var isReserved: Boolean = false
 )

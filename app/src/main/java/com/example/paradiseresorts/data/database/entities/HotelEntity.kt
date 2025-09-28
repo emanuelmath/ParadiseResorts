@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity("hotel")
 data class HotelEntity(
-    @PrimaryKey(true)
+    @PrimaryKey(false)
     val id: Int = 0,
     val name: String
 ) {

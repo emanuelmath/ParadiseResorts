@@ -4,11 +4,13 @@ package com.example.paradiseresorts.ui.screens.splash
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paradiseresorts.data.repository.SessionRepository
+import com.example.paradiseresorts.domain.models.Session
 import com.example.paradiseresorts.ui.classes.SplashUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SplashViewModel(/*Introducir los repositorios aquí*/): ViewModel() {
+class SplashViewModel(private val sessionRepository: SessionRepository): ViewModel() {
 
     //Etiqueta para filtrar los logs en LogCat referentes a este VM:
     companion object {
@@ -24,14 +26,14 @@ class SplashViewModel(/*Introducir los repositorios aquí*/): ViewModel() {
                 Log.d(TAG, "Iniciando verificación de sesión...")
                 uiState = uiState.copy(isLoading = true, errorMessage = null)
 
-
                 delay(1500)
 
-                // Valor de prueba (cambiar a true/false para probar flujos)
-                val hasActiveSession = false
+                val currentSessionValue: Session? = sessionRepository.obtainCurrentSession()
+                val hasActiveSession: Boolean = currentSessionValue != null
+                val hasDUILogged: String? =  currentSessionValue?.dui
 
                 Log.d(TAG, "Resultado de sesión: $hasActiveSession")
-                uiState = uiState.copy(isLoading = false, isSessionActive = hasActiveSession)
+                uiState = uiState.copy(isLoading = false, isSessionActive = hasActiveSession, duiSession = hasDUILogged)
 
                 onResult(hasActiveSession)
 

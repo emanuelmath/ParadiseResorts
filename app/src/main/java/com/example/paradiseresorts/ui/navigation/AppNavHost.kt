@@ -109,7 +109,7 @@ fun AppNavHost(
 
         //Pantalla de Home:
         composable(route = Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
 
         //Pantalla de Perfil de usuario:
