@@ -28,14 +28,23 @@ import com.example.paradiseresorts.ui.components.actionbars.BottomBar
 import com.example.paradiseresorts.ui.navigation.Screen
 import com.example.paradiseresorts.ui.navigation.HomeRoute
 import com.example.paradiseresorts.ui.screens.feedback.FeedbackScreen
+import com.example.paradiseresorts.ui.screens.feedback.FeedbackViewModel
 import com.example.paradiseresorts.ui.screens.reservation.ReservationScreen
 import com.example.paradiseresorts.ui.screens.services.ServicesScreen
 import com.example.paradiseresorts.ui.screens.information.InformationScreen
+import com.example.paradiseresorts.ui.screens.information.InformationViewModel
+import com.example.paradiseresorts.ui.screens.reservation.ReservationViewModel
+import com.example.paradiseresorts.ui.screens.services.ServicesViewModel
 
 // Composable que maneja la navegación interna de la aplicación:
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    reservationViewModel: ReservationViewModel,
+    servicesViewModel: ServicesViewModel,
+    homeContentViewModel: HomeContentViewModel,
+    informationViewModel: InformationViewModel,
+    feedbackViewModel: FeedbackViewModel
 ) {
     val homeNavController = rememberNavController()
 
@@ -62,19 +71,19 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(HomeRoute.HomeContent.route) {
-                HomeContentScreen()
+                HomeContentScreen(homeContentViewModel)
             }
             composable(HomeRoute.Services.route) {
-                ServicesScreen()
+                ServicesScreen(servicesViewModel)
             }
             composable(HomeRoute.Reservations.route) {
-                ReservationScreen()
+                ReservationScreen(reservationViewModel)
             }
             composable(HomeRoute.Information.route) {
-                InformationScreen()
+                InformationScreen(informationViewModel)
             }
             composable(HomeRoute.Feedback.route) {
-                FeedbackScreen()
+                FeedbackScreen(feedbackViewModel)
             }
         }
     }
@@ -82,7 +91,9 @@ fun HomeScreen(
 
 // Composable del diseño de la pantalla Home:
 @Composable
-fun HomeContentScreen() {
+fun HomeContentScreen(
+    homeContentViewModel: HomeContentViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

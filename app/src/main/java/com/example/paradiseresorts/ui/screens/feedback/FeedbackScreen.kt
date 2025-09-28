@@ -15,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun FeedbackScreen() {
+fun FeedbackScreen(
+    feedbackViewModel: FeedbackViewModel
+) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White)
             .verticalScroll(rememberScrollState())

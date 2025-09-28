@@ -8,12 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.paradiseresorts.ui.components.AppColors
-import com.example.paradiseresorts.ui.screens.feedback.FeedbackScreen
+import com.example.paradiseresorts.ui.screens.feedback.FeedbackViewModel
+import com.example.paradiseresorts.ui.screens.home.HomeContentViewModel
 import com.example.paradiseresorts.ui.screens.home.HomeScreen
-import com.example.paradiseresorts.ui.screens.information.InformationScreen
+import com.example.paradiseresorts.ui.screens.information.InformationViewModel
 import com.example.paradiseresorts.ui.screens.profile.ProfileScreen
-import com.example.paradiseresorts.ui.screens.reservation.ReservationScreen
-import com.example.paradiseresorts.ui.screens.services.ServicesScreen
+import com.example.paradiseresorts.ui.screens.profile.ProfileViewModel
+import com.example.paradiseresorts.ui.screens.reservation.ReservationViewModel
+import com.example.paradiseresorts.ui.screens.services.ServicesViewModel
 import com.example.paradiseresorts.ui.screens.splash.SplashScreen
 import com.example.paradiseresorts.ui.screens.start.StartScreen
 import com.example.paradiseresorts.ui.screens.session.LoginScreen
@@ -27,7 +29,13 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     loginViewModel: LoginViewModel,
     registerViewModel: RegisterViewModel,
-    splashViewModel: SplashViewModel
+    splashViewModel: SplashViewModel,
+    profileViewModel: ProfileViewModel,
+    reservationViewModel: ReservationViewModel,
+    servicesViewModel: ServicesViewModel,
+    homeContentViewModel: HomeContentViewModel,
+    informationViewModel: InformationViewModel,
+    feedbackViewModel: FeedbackViewModel
 ) {
     val scope = rememberCoroutineScope()
     val appColors = AppColors()
@@ -45,12 +53,12 @@ fun AppNavHost(
                 splashViewModel = splashViewModel,
                 onSessionActive = {
                     navController.navigate(route = Screen.Home.route) {
-                        popUpTo(id = 0) {inclusive = true}
+                        popUpTo(id = 0) { inclusive = true }
                     }
                 },
                 onSessionRequired = {
                     navController.navigate(route = Screen.Start.route) {
-                        popUpTo(id = 0) {inclusive = true}
+                        popUpTo(id = 0) { inclusive = true }
                     }
                 },
                 navController = navController,
@@ -76,12 +84,12 @@ fun AppNavHost(
                 loginViewModel = loginViewModel,
                 onLoginSuccess = {
                     navController.navigate(route = Screen.Home.route) {
-                        popUpTo(id = 0) {inclusive = true}
+                        popUpTo(id = 0) { inclusive = true }
                     }
                 },
                 onBackClick = {
                     navController.navigate(route = Screen.Start.route) {
-                        popUpTo(id = 0) {inclusive = true}
+                        popUpTo(id = 0) { inclusive = true }
                     }
                 },
                 onRegisterClick = {
@@ -113,39 +121,35 @@ fun AppNavHost(
         //Pantalla de Home:
         composable(route = Screen.Home.route) {
             HomeScreen(
-                navController = navController
+                navController = navController,
+                reservationViewModel = reservationViewModel,
+                servicesViewModel = servicesViewModel,
+                homeContentViewModel = homeContentViewModel,
+                informationViewModel = informationViewModel,
+                feedbackViewModel = feedbackViewModel
             )
         }
 
         //Pantalla de Perfil de usuario:
         composable(route = Screen.Profile.route) {
             ProfileScreen(
+                profileViewModel = profileViewModel,
                 onLogoutClick = {
                     navController.navigate(route = Screen.Start.route) {
+                        popUpTo(id = 0) { inclusive = true }
+                    }
+                },
+                onBackClick = {
+                    navController.navigate(route = Screen.Home.route) {
                         popUpTo(id = 0) { inclusive = true }
                     }
                 }
             )
         }
 
-        //Pantalla de Reservaciones / Hacer reservaciones:
-        composable(route = Screen.Reservation.route) {
-            ReservationScreen()
-        }
-
-        //Pantalla de Información de hoteles:
-        composable(route = Screen.Information.route) {
-            InformationScreen()
-        }
-
-        //Pantalla de Feedback y valoraciones de usuarios:
-        composable(route = Screen.Feedback.route) {
-            FeedbackScreen()
-        }
-
-        //Pantalla de servicios extras:
-        composable(route = Screen.Services.route) {
-            ServicesScreen()
-        }
+        /* NOTA: El resto de las pantallas se manejan por medio de un navHostController contenido
+        * en la pantalla de Home, para encapsular esta navegación y no tener que dibujar las
+        * action bars en cada pantalla.
+        * */
     }
 }

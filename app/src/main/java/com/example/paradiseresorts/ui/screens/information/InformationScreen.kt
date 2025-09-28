@@ -1,3 +1,4 @@
+//Este archivo contiene la definición y funcionalidad de la pantalla de Información de hoteles.
 package com.example.paradiseresorts.ui.screens.information
 
 import androidx.compose.foundation.background
@@ -14,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun InformationScreen() {
+fun InformationScreen(
+    informationViewModel: InformationViewModel
+) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White)
             .verticalScroll(rememberScrollState())

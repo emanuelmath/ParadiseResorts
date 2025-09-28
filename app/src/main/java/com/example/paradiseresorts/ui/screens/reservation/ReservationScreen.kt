@@ -16,7 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ReservationScreen() {
+fun ReservationScreen(
+    reservationViewModel: ReservationViewModel
+) {
     Column(
         modifier = Modifier.fillMaxSize().background(color = Color.White)
             .verticalScroll(rememberScrollState())
