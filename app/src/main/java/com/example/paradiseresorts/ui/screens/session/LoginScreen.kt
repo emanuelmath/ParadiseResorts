@@ -163,9 +163,9 @@ fun LoginScreen(
                         Spacer(modifier = Modifier.height(height = 16.dp))
 
                         OutlinedTextField(
-                            value = uiState.usernameOrEmail,
-                            onValueChange = loginViewModel::onUsernameOrEmailChange,
-                            label = { Text(text = "Nombre de usuario o email") },
+                            value = uiState.emailOrDUI,
+                            onValueChange = loginViewModel::onEmailOrDUIChange,
+                            label = { Text(text = "Correo Electrónico o DUI") },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )

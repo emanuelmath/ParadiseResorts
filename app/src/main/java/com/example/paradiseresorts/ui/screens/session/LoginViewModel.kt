@@ -2,6 +2,7 @@
 package com.example.paradiseresorts.ui.screens.session
 
 import android.util.Log
+import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -36,7 +37,7 @@ class LoginViewModel(private val userRepository: UserRepository,
     fun startSession() {
         viewModelScope.launch {
             // Validaciones iniciales
-            if (uiState.usernameOrEmail.isBlank() || uiState.password.isBlank()) {
+            if (uiState.emailOrDUI.isBlank() || uiState.password.isBlank()) {
                 uiState = uiState.copy(errorMessage = "Todos los campos son obligatorios")
                 return@launch
             }
@@ -49,7 +50,7 @@ class LoginViewModel(private val userRepository: UserRepository,
 
             try {
                 uiState = uiState.copy(isLoading = true, errorMessage = null)
-                Log.d(TAG, "Intentando login con: ${uiState.usernameOrEmail}")
+                Log.d(TAG, "Intentando login con: ${uiState.emailOrDUI}")
                 delay(1000)
 
                 // Validación contra usuario de prueba
@@ -58,7 +59,11 @@ class LoginViewModel(private val userRepository: UserRepository,
                 //                uiState.password == TEST_PASSWORD
                 //        )
 
-                val user = userRepository.getUserByEmail(uiState.usernameOrEmail)
+                val user = if (Patterns.EMAIL_ADDRESS.matcher(uiState.emailOrDUI).matches()) {
+                    userRepository.getUserByEmail(uiState.emailOrDUI)
+                } else {
+                    userRepository.getUserByDUI(uiState.emailOrDUI)
+                }
 
                 if (user != null) {
                     if(BCrypt.checkpw(uiState.password, user.password)) {
@@ -98,8 +103,8 @@ class LoginViewModel(private val userRepository: UserRepository,
         }
     }
 
-    fun onUsernameOrEmailChange(newValue: String) {
-        uiState = uiState.copy(usernameOrEmail = newValue, errorMessage = null)
+    fun onEmailOrDUIChange(newValue: String) {
+        uiState = uiState.copy(emailOrDUI = newValue, errorMessage = null)
     }
 
     fun onPasswordChange(newValue: String) {

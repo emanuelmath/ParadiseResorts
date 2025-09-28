@@ -18,4 +18,8 @@ class UserRepository(private val userDao: UserDao) {
     suspend fun getUserByEmail(email: String): User? {
         return userDao.getUserByEmail(email)?.toModel()
     }
+
+    suspend fun getUserByPhoneNumber(phoneNumber: String): User? {
+        return userDao.getUserByPhoneNumber(phoneNumber)?.toModel()
+    }
 }

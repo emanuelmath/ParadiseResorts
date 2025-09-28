@@ -91,7 +91,7 @@ class RegisterViewModel(private val userRepository: UserRepository,
                     }
                     uiState = uiState.copy(isLoading = true)
                     delay(1000)
-                    if (uiState.email == "test@email.com") {
+                    if (userRepository.getUserByEmail(uiState.email) != null) {
                         uiState = uiState.copy(isLoading = false, errorMessage = "Email ya registrado")
                     } else {
                         uiState = uiState.copy(isLoading = false, errorMessage = null)
@@ -116,7 +116,7 @@ class RegisterViewModel(private val userRepository: UserRepository,
                     }
                     uiState = uiState.copy(isLoading = true)
                     delay(1000)
-                    if (uiState.phoneNumber == "12345678") {
+                    if (userRepository.getUserByPhoneNumber(uiState.phoneNumber) != null) {
                         uiState = uiState.copy(isLoading = false, errorMessage = "Teléfono ya registrado")
                     } else {
                         uiState = uiState.copy(isLoading = false, errorMessage = null)
@@ -131,7 +131,7 @@ class RegisterViewModel(private val userRepository: UserRepository,
                         uiState = uiState.copy(errorMessage = "Debes aceptar los términos")
                     } else {
                         onValid()
-                        val userToCreate: User = User(
+                        val userToCreate = User(
                             dui = uiState.dui,
                             name = uiState.name,
                             lastName = uiState.lastName,
@@ -160,7 +160,6 @@ class RegisterViewModel(private val userRepository: UserRepository,
     //Función de añadir tarjeta
     fun onCardAdded(code: String, expirationDate: String, cvv: String) {
 
-        //viewModelScope.launch {
             uiState = uiState.copy(
                 cardInfo = CardInfo(
                     code = code,
@@ -170,15 +169,7 @@ class RegisterViewModel(private val userRepository: UserRepository,
                 ),
                 errorMessage = null
             )
-            val cardToCreate = Card(
-                code = uiState.cardInfo!!.code,
-                expirationDate = uiState.cardInfo!!.expirationDate,
-                cvv = uiState.cardInfo!!.cvv,
-                dui = uiState.cardInfo!!.dui
-            )
 
-        //cardRepository.createCard(cardToCreate)
-        //}
         //Poner validaciones para el tiempo, si el uiState no se actualizó, se tarda mucho, etc...
     }
 
