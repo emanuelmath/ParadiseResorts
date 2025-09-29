@@ -8,19 +8,22 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.paradiseresorts.data.repository.SessionRepository
+import com.example.paradiseresorts.data.repository.UserRepository
 import com.example.paradiseresorts.ui.classes.ProfileUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    sessionRepository: SessionRepository  //Repository de ejemplo, probablemente necesites otro o no
+    private val userRepository: UserRepository,
+    private val sessionRepository: SessionRepository
 ) : ViewModel() {
 
     companion object {
         private const val TAG = "profileVM"
     }
 
-    var uiState by mutableStateOf(ProfileUiState())
+    var uiState by mutableStateOf(ProfileUiState("123456789"))
+        //Le paso un DUI falso para evitar el error, aquí hay que ver cómo pasarlo y si se le pasa al screen o al vm factory.
         private set
 
     fun logout(onResult: (Boolean) -> Unit) {
@@ -30,7 +33,7 @@ class ProfileViewModel(
 
                 // Simular un proceso
                 delay(1000)
-                //sessionRepository.clearSession()
+                sessionRepository.deleteSessionUser(uiState.dui)
 
                 uiState = uiState.copy(isLoggingOut = false)
                 onResult(true)
