@@ -14,7 +14,7 @@ interface SessionDao {
     @Query("SELECT * FROM session LIMIT 1")
     suspend fun obtainCurrentSession(): SessionEntity?
 
-    @Query("DELETE FROM session WHERE dui = :dui")
-    suspend fun deleteSessionUser(dui: String)
+    @Query("DELETE FROM session")
+    suspend fun deleteAllSessions()
 
 }

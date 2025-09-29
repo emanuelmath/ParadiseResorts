@@ -1,8 +1,14 @@
 //Esta es la definición de la navegación ente las pantallas de la aplicación.
 package com.example.paradiseresorts.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -23,6 +29,7 @@ import com.example.paradiseresorts.ui.screens.session.LoginViewModel
 import com.example.paradiseresorts.ui.screens.session.RegisterScreen
 import com.example.paradiseresorts.ui.screens.session.RegisterViewModel
 import com.example.paradiseresorts.ui.screens.splash.SplashViewModel
+import com.example.paradiseresorts.ui.viewmodels.UserSessionViewModel
 
 @Composable
 fun AppNavHost(
@@ -35,7 +42,8 @@ fun AppNavHost(
     servicesViewModel: ServicesViewModel,
     homeContentViewModel: HomeContentViewModel,
     informationViewModel: InformationViewModel,
-    feedbackViewModel: FeedbackViewModel
+    feedbackViewModel: FeedbackViewModel,
+    userSessionViewModel: UserSessionViewModel
 ) {
     val scope = rememberCoroutineScope()
     val appColors = AppColors()
@@ -126,7 +134,8 @@ fun AppNavHost(
                 servicesViewModel = servicesViewModel,
                 homeContentViewModel = homeContentViewModel,
                 informationViewModel = informationViewModel,
-                feedbackViewModel = feedbackViewModel
+                feedbackViewModel = feedbackViewModel,
+                userSessionViewModel = userSessionViewModel
             )
         }
 

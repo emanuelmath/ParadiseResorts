@@ -1,6 +1,7 @@
 //Este archivo contiene la estructura composable y funcionalidad de la pantalla de arranque
 package com.example.paradiseresorts.ui.screens.splash
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -47,7 +48,7 @@ fun SplashScreen(
 ) {
     val appColors = LocalAppColors.current
     val alpha = remember { Animatable(initialValue = 0f) }
-    val uiState = remember { mutableStateOf(splashViewModel.uiState) }
+    val uiState = splashViewModel.uiState
 
     //Controlador para la animación 'fade in'
     LaunchedEffect(Unit) {
@@ -108,14 +109,16 @@ fun SplashScreen(
     LaunchedEffect(Unit) {
         delay(splashTime)
         splashViewModel.checkSession { hasSession ->
-            if (hasSession) {
-                onSessionActive()
-                navController.navigate(Screen.Home.route)
-                //uiState.value.duiSession -> pasar como param para nevgar a /home/dui
-            } else {
+            if (!hasSession) {
                 onSessionRequired()
-                navController.navigate(Screen.Start.route)
             }
+        }
+    }
+
+    LaunchedEffect(uiState.isSessionActive) {
+        if (uiState.isSessionActive == true) {
+            Log.d("DUI", "Valor de dui: ${uiState.duiSession}")
+            onSessionActive()
         }
     }
 }

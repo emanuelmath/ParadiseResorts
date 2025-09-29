@@ -2,6 +2,9 @@
 package com.example.paradiseresorts.ui.screens.splash
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.paradiseresorts.data.repository.SessionRepository
@@ -17,8 +20,8 @@ class SplashViewModel(private val sessionRepository: SessionRepository): ViewMod
         private const val TAG = "splashVM"
     }
 
-    var uiState: SplashUiState = SplashUiState()
-        private set
+    var uiState by mutableStateOf(SplashUiState())
+    private set
 
     fun checkSession(onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
@@ -30,10 +33,11 @@ class SplashViewModel(private val sessionRepository: SessionRepository): ViewMod
 
                 val currentSessionValue: Session? = sessionRepository.obtainCurrentSession()
                 val hasActiveSession: Boolean = currentSessionValue != null
-                val hasDUILogged: String? =  currentSessionValue?.dui
+                val hasDUILogged: String? = currentSessionValue?.dui
 
                 Log.d(TAG, "Resultado de sesión: $hasActiveSession")
-                uiState = uiState.copy(isLoading = false, isSessionActive = hasActiveSession, duiSession = hasDUILogged)
+                Log.d(TAG, "${currentSessionValue?.dui}")
+                uiState = uiState.copy(duiSession = hasDUILogged,isLoading = false, isSessionActive = hasActiveSession)
 
                 onResult(hasActiveSession)
 

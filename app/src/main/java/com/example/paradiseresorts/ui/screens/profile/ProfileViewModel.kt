@@ -33,7 +33,7 @@ class ProfileViewModel(
 
                 // Simular un proceso
                 delay(1000)
-                sessionRepository.deleteSessionUser(uiState.dui)
+                sessionRepository.deleteAllSessions()
 
                 uiState = uiState.copy(isLoggingOut = false)
                 onResult(true)

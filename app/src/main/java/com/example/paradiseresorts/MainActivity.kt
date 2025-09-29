@@ -28,6 +28,8 @@ import com.example.paradiseresorts.ui.screens.session.RegisterViewModelFactory
 import com.example.paradiseresorts.ui.screens.splash.SplashViewModel
 import com.example.paradiseresorts.ui.screens.splash.SplashViewModelFactory
 import com.example.paradiseresorts.ui.theme.ParadiseResortsTheme
+import com.example.paradiseresorts.ui.viewmodels.UserSessionViewModel
+import com.example.paradiseresorts.ui.viewmodels.UserSessionViewModelFactory
 
 class MainActivity : ComponentActivity() {
 
@@ -48,6 +50,9 @@ class MainActivity : ComponentActivity() {
     lateinit var informationViewModel: InformationViewModel
         private set
     lateinit var feedbackViewModel: FeedbackViewModel
+        private set
+
+    lateinit var userSessionViewModel: UserSessionViewModel
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +104,12 @@ class MainActivity : ComponentActivity() {
             FeedbackViewModelFactory()
         )[FeedbackViewModel::class.java]
 
+        userSessionViewModel = ViewModelProvider(
+            this,
+            UserSessionViewModelFactory()
+        )[UserSessionViewModel::class.java]
+
+
         enableEdgeToEdge()
         setContent {
             ParadiseResortsTheme {
@@ -111,7 +122,8 @@ class MainActivity : ComponentActivity() {
                     servicesViewModel,
                     homeContentViewModel,
                     informationViewModel,
-                    feedbackViewModel
+                    feedbackViewModel,
+                    userSessionViewModel
                 )
             }
         }
@@ -128,7 +140,8 @@ fun ParadiseResortsApplication(
     servicesViewModel: ServicesViewModel,
     homeContentViewModel: HomeContentViewModel,
     informationViewModel: InformationViewModel,
-    feedbackViewModel: FeedbackViewModel
+    feedbackViewModel: FeedbackViewModel,
+    userSessionViewModel: UserSessionViewModel
 ) {
     val navController = rememberNavController()
     val context = LocalContext.current
@@ -143,6 +156,7 @@ fun ParadiseResortsApplication(
         servicesViewModel,
         homeContentViewModel,
         informationViewModel,
-        feedbackViewModel
+        feedbackViewModel,
+        userSessionViewModel
     )
 }

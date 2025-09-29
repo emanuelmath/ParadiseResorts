@@ -10,8 +10,8 @@ class SessionRepository(private val sessionDao: SessionDao) {
         return sessionDao.createSession(session.toEntity())
     }
 
-    suspend fun deleteSessionUser(dui: String) {
-        sessionDao.deleteSessionUser(dui)
+    suspend fun deleteAllSessions() {
+        sessionDao.deleteAllSessions()
     }
 
     suspend fun obtainCurrentSession(): Session? {

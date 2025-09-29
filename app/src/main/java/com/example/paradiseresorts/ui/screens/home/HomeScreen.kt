@@ -8,6 +8,7 @@
 
 package com.example.paradiseresorts.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -35,6 +39,7 @@ import com.example.paradiseresorts.ui.screens.information.InformationScreen
 import com.example.paradiseresorts.ui.screens.information.InformationViewModel
 import com.example.paradiseresorts.ui.screens.reservation.ReservationViewModel
 import com.example.paradiseresorts.ui.screens.services.ServicesViewModel
+import com.example.paradiseresorts.ui.viewmodels.UserSessionViewModel
 
 // Composable que maneja la navegación interna de la aplicación:
 @Composable
@@ -44,9 +49,12 @@ fun HomeScreen(
     servicesViewModel: ServicesViewModel,
     homeContentViewModel: HomeContentViewModel,
     informationViewModel: InformationViewModel,
-    feedbackViewModel: FeedbackViewModel
+    feedbackViewModel: FeedbackViewModel,
+    userSessionViewModel: UserSessionViewModel
 ) {
     val homeNavController = rememberNavController()
+    val uiState = homeContentViewModel.uiState
+    val dui = userSessionViewModel.dui
 
     Scaffold(
         topBar = {
@@ -71,7 +79,7 @@ fun HomeScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(HomeRoute.HomeContent.route) {
-                HomeContentScreen(homeContentViewModel)
+                HomeContentScreen(userSessionViewModel, homeContentViewModel)
             }
             composable(HomeRoute.Services.route) {
                 ServicesScreen(servicesViewModel)
@@ -92,8 +100,17 @@ fun HomeScreen(
 // Composable del diseño de la pantalla Home:
 @Composable
 fun HomeContentScreen(
+    userSessionViewModel: UserSessionViewModel,
     homeContentViewModel: HomeContentViewModel
 ) {
+    Log.d("DUIUSVM", "DUI: ${userSessionViewModel.dui}")
+    val dui = userSessionViewModel.dui!!
+    val uiState = homeContentViewModel.uiState
+
+    LaunchedEffect(dui) {
+        homeContentViewModel.obtainCurrenUser(dui)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -101,7 +118,7 @@ fun HomeContentScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Bienvenido a pantalla HOME",
+            text = "Bienvenido a pantalla HOME, ${uiState.currentUser?.name}",
             style = MaterialTheme.typography.headlineMedium
         )
         //Elementos de relleno para comprobar la pantalla scrollable

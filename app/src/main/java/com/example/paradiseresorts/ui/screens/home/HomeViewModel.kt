@@ -7,11 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paradiseresorts.data.repository.UserRepository
 import com.example.paradiseresorts.ui.classes.HomeContentUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class HomeContentViewModel(/*Añadir repositorios necesarios*/) : ViewModel() {
+class HomeContentViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     //Etiqueta de filtrado de logs pertenecientes a este VM:
     companion object {
@@ -20,6 +21,13 @@ class HomeContentViewModel(/*Añadir repositorios necesarios*/) : ViewModel() {
 
     var uiState: HomeContentUiState by mutableStateOf(HomeContentUiState())
         private set
+
+    fun obtainCurrenUser(dui: String) {
+        viewModelScope.launch {
+            val user = userRepository.getUserByDUI(dui)
+            uiState = uiState.copy(currentUser = user)
+        }
+    }
 
     //Función de ejemplo para refrescar el contenido de Home
     fun refreshHome() {
