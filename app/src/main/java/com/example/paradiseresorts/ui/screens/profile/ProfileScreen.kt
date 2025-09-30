@@ -16,19 +16,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.paradiseresorts.ui.components.buttons.DangerButton
 import com.example.paradiseresorts.ui.theme.LocalAppColors
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
@@ -36,24 +45,34 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    val appColors = LocalAppColors.current
+    val uiState = profileViewModel.uiState
+    val coroutineScope = rememberCoroutineScope()
+
+    // 🔹 Cargar usuario al iniciar
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val session = profileViewModel.getCurrentSession()
+            session?.dui?.let { dui ->
+                profileViewModel.loadUser(dui)
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-
+        // TopBar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .background(color = appColors.purpleColor)
+                .background(Color(0xFFC13584))
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Botón back a la izquierda
-            IconButton(onClick = { onBackClick() }) {
+            IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Volver",
@@ -62,7 +81,6 @@ fun ProfileScreen(
                 )
             }
 
-            // Título centrado
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -77,29 +95,85 @@ fun ProfileScreen(
                 )
             }
 
-
             Spacer(modifier = Modifier.width(48.dp))
         }
 
-        // Contenido principal
-        Column(
+        // Card de presentación
+        Card(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFC13584)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+            shape = MaterialTheme.shapes.medium
         ) {
-            Button(
-                onClick = {
-                    profileViewModel.logout { success ->
-                        if (success) {
-                            onLogoutClick()
-                        }
-                    }
-                }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Cerrar sesión")
+                val user = uiState.userInProfile
+
+                if (user != null) {
+                    Text(
+                        text = "${user.name} ${user.lastName}",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Foto de perfil",
+                        tint = Color.White,
+                        modifier = Modifier.size(100.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    UserInfoRow(label = "DUI", value = user.dui)
+                    UserInfoRow(label = "Fecha de nacimiento", value = user.dateOfBirthday)
+                    UserInfoRow(label = "Email", value = user.email)
+                    UserInfoRow(label = "Teléfono", value = user.phoneNumber)
+                } else {
+                    Text(
+                        text = "Cargando datos...",
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Botón cerrar sesión
+        DangerButton(
+            text = if (uiState.isLoggingOut) "Cerrando..." else "Cerrar sesión",
+            onClick = {
+                profileViewModel.logout { success ->
+                    if (success) onLogoutClick()
+                }
+            },
+            enabled = !uiState.isLoggingOut
+        )
+    }
+}
+
+
+@Composable
+fun UserInfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(label, color = Color.White, fontWeight = FontWeight.Bold)
+            Text(value, color = Color.White, fontSize = 16.sp)
         }
     }
 }
