@@ -6,6 +6,14 @@ import com.example.paradiseresorts.domain.mappers.toModel
 import com.example.paradiseresorts.domain.models.Card
 
 class CardRepository(private val cardDao: CardDao) {
+
+    suspend fun getCardByDUI(dui: String): Card? {
+        return cardDao.getCardByDUI(dui)?.toModel()
+    }
+
+    suspend fun getCardByCode(code: String): Card? {
+        return cardDao.getCardByCode(code)?.toModel()
+    }
     suspend fun createCard(card: Card): Long {
         return cardDao.createCard(card.toEntity())
     }

@@ -16,6 +16,6 @@ data class UserEntity(
     val email: String,
     val password: String,
     val phoneNumber: String,
-    var balance: Double
+    var balance: Double = 0.0
 ) {
 }

@@ -124,6 +124,9 @@ class RegisterViewModel(private val userRepository: UserRepository,
                     }
                 }
                 7 -> {
+                    //                    if(cardRepository.getCardByCode()) {
+                    //
+                    //                    }
                     onValid()
                 }
                 8 -> {
@@ -159,7 +162,6 @@ class RegisterViewModel(private val userRepository: UserRepository,
 
     //Función de añadir tarjeta
     fun onCardAdded(code: String, expirationDate: String, cvv: String) {
-
             uiState = uiState.copy(
                 cardInfo = CardInfo(
                     code = code,

@@ -4,11 +4,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.paradiseresorts.data.database.entities.CardEntity
+import com.example.paradiseresorts.domain.mappers.toEntity
 
 @Dao
 interface CardDao {
     @Insert
     suspend fun createCard(card: CardEntity): Long
+
+    @Query("SELECT * FROM card WHERE code = :code ")
+    suspend fun getCardByCode(code: String): CardEntity?
+    @Query("SELECT * FROM card WHERE dui = :dui")
+    suspend fun getCardByDUI(dui: String): CardEntity?
 
     @Query("SELECT * FROM card WHERE code = :code AND cvv = :cvv AND dui = :dui")
     suspend fun verifyCard(code: String, cvv: Int, dui: String): CardEntity?

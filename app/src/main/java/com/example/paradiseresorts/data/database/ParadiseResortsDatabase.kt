@@ -7,7 +7,7 @@ import com.example.paradiseresorts.data.database.entities.*
 
 @Database(entities = [CardEntity::class, FeedbackEntity::class,HotelEntity::class, ReservationEntity::class,
     RoomEntity::class, ServiceEntity::class, SessionEntity::class, TransactionEntity::class,
-    UserEntity::class], version = 2) //1- Versión Inicial de la BD. 2- Algunos campos unique y se agregó la tabla feedback.
+    UserEntity::class], version = 3) //1- Versión Inicial de la BD. 2- Algunos campos unique y se agregó la tabla feedback. 3- Cambios en la capa de datos
 abstract class ParadiseResortsDatabase : RoomDatabase() {
     abstract fun CardDao(): CardDao
     abstract fun FeedbackDao(): FeedbackDao
