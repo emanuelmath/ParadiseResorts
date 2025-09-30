@@ -11,6 +11,9 @@ interface ServiceDao {
     @Query("SELECT * FROM service")
     suspend fun getAllServices(): List<ServiceEntity>?
 
+    @Query("SELECT * FROM service WHERE dui = :dui")
+    suspend fun getAllServicesByDUI(dui: String): List<ServiceEntity>?
+
     @Insert
     suspend fun insertService(service: ServiceEntity): Long
 

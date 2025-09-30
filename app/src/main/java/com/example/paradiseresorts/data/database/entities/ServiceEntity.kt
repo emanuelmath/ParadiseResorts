@@ -12,5 +12,6 @@ data class ServiceEntity(
     val id: Int = 0,
     val nombre: String,
     val price: Double,
-    val dui: String
+    val dui: String,
+    val isActive: Boolean = true
 )

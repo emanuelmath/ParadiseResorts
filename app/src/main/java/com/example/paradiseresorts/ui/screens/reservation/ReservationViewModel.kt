@@ -11,7 +11,7 @@ import com.example.paradiseresorts.ui.classes.ReservationUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ReservationViewModel(/*Introducir repositorios necesarios*/) : ViewModel() {
+class ReservationViewModel() : ViewModel() {
 
     //Etiqueta para filtar logs referentes a este VM:
     companion object {

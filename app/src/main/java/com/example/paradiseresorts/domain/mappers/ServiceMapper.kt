@@ -8,7 +8,8 @@ fun Service.toEntity(): ServiceEntity {
         id = id,
         nombre = nombre,
         price = price,
-        dui = dui
+        dui = dui,
+        isActive = isActive
     )
 }
 
@@ -17,6 +18,7 @@ fun ServiceEntity.toModel(): Service {
         id = id,
         nombre = nombre,
         price = price,
-        dui = dui
+        dui = dui,
+        isActive = isActive
     )
 }

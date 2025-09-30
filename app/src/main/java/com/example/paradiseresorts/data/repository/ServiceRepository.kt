@@ -11,6 +11,10 @@ class ServiceRepository(private val serviceDao: ServiceDao) {
         return serviceDao.getAllServices()?.map { it.toModel() }
     }
 
+    suspend fun getAllServicesByDUI(dui: String): List<Service>? {
+        return serviceDao.getAllServicesByDUI(dui)?.map { it.toModel() }
+    }
+
     suspend fun insertService(service: Service): Long {
         return serviceDao.insertService(service.toEntity())
     }
