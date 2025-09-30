@@ -55,10 +55,161 @@ import com.example.paradiseresorts.ui.theme.LocalAppColors
 import kotlinx.coroutines.launch
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarViewWeek
+import com.example.paradiseresorts.ui.components.buttons.PrimaryButton
+import com.example.paradiseresorts.ui.components.buttons.SecondaryButton
 import com.example.paradiseresorts.ui.components.dialogs.AddCardDialog
 
+@Composable
+fun RegisterScreen(
+    registerViewModel: RegisterViewModel,
+    onRegisterSuccess: () -> Unit,
+    onBackClick: () -> Unit,
+    onLoginClick: () -> Unit
+) {
+    val uiState = registerViewModel.uiState
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    var currentStep by remember { mutableStateOf(0) }
+    // 🔹 Quitamos el paso de tarjeta → total 8 pasos
+    val stepsCount = 8
+    val appColors = LocalAppColors.current
+
+    // Mostrar errores como snackbar
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let {
+            scope.launch {
+                snackbarHostState.showSnackbar(it)
+                registerViewModel.clearError()
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(brush = Brush.linearGradient(colors = appColors.backgroundGradient))
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // 🔹 AppBar simple
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Atrás",
+                            tint = Color.White,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    Text("Registrar", color = Color.White, fontSize = 42.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("una nueva cuenta", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.SemiBold)
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                // 🔹 Contenedor blanco centrado
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .wrapContentHeight() // no se expande innecesariamente
+                        .align(Alignment.CenterHorizontally)
+                        .background(Color.White, shape = RoundedCornerShape(16.dp))
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp)
+                    ) {
+                        Text("Paso ${currentStep + 1} de $stepsCount", color = Color.Gray, fontSize = 14.sp)
+
+                        Spacer(Modifier.height(16.dp))
+
+                        // Contenido dinámico
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            when (currentStep) {
+                                0 -> StepContent("DUI (9 dígitos)", uiState.dui, registerViewModel::onDuiChange, keyboardType = KeyboardType.Number)
+                                1 -> StepContent("Dinos tu nombre", uiState.name, registerViewModel::onNameChange)
+                                2 -> StepContent("Dinos tu apellido", uiState.lastName, registerViewModel::onLastNameChange)
+                                3 -> DatePickerStep(uiState.dateOfBirth, registerViewModel::onDateOfBirthChange)
+                                4 -> StepContent("Tu correo electrónico", uiState.email, registerViewModel::onEmailChange, keyboardType = KeyboardType.Email)
+                                5 -> PasswordStep(uiState.password, uiState.confirmPassword, registerViewModel::onPasswordChange, registerViewModel::onConfirmPasswordChange)
+                                6 -> StepContent("Tu número de teléfono", uiState.phoneNumber, registerViewModel::onPhoneNumberChange, keyboardType = KeyboardType.Number)
+                                7 -> FinalStep(uiState.acceptTerms, registerViewModel::onAcceptTermsChange)
+                            }
+                        }
+
+                        Spacer(Modifier.height(16.dp))
+
+                        // 🔹 Botones custom
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            SecondaryButton(
+                                text = "Atrás",
+                                onClick = { if (currentStep > 0) currentStep-- },
+                                enabled = currentStep > 0
+                            )
+                            PrimaryButton(
+                                text = if (currentStep == stepsCount - 1) "Registrarse" else "Continuar",
+                                onClick = {
+                                    registerViewModel.validateStep(currentStep) {
+                                        if (currentStep < stepsCount - 1) {
+                                            currentStep++
+                                        } else {
+                                            // 🔹 Registro final → redirigir a login
+                                            registerViewModel.registerUser {
+                                                onRegisterSuccess()
+                                            }
+                                        }
+                                    }
+                                },
+                                enabled = !uiState.isLoading
+                            )
+                        }
+
+                        Spacer(Modifier.height(16.dp))
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text("¿Ya tienes una cuenta?", color = Color.Gray)
+                            TextButton(onClick = onLoginClick) {
+                                Text("INICIA SESIÓN", color = appColors.blueColor, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+/*
 @Composable
 fun RegisterScreen(
     registerViewModel: RegisterViewModel,
@@ -237,6 +388,7 @@ fun RegisterScreen(
         }
     }
 }
+*/
 // -- SECCIÓN DE COMPOSABLES EXTRAS PARA LA PANTALLA --
 
 //Composable para llenar contenido del contenedor dinámico:

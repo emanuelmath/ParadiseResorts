@@ -12,8 +12,7 @@ class RegisterViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return RegisterViewModel(userRepository = UserRepository(ParadiseResortsApplication.database.UserDao()),
-                cardRepository = CardRepository(ParadiseResortsApplication.database.CardDao())) as T
+            return RegisterViewModel(userRepository = UserRepository(ParadiseResortsApplication.database.UserDao())) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

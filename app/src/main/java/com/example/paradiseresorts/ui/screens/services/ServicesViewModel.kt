@@ -32,6 +32,83 @@ class ServicesViewModel(
     var uiState: ServicesUiState by mutableStateOf(ServicesUiState())
         private set
 
+    // Catálogo estático (no tiene dui)
+    fun loadCatalogServices() {
+        uiState = uiState.copy(
+            offeredServices = CatalogProvider.services
+        )
+        Log.d(TAG, "Catálogo de servicios cargado")
+    }
+
+    // Servicios ya contratados por usuario
+    fun loadUserServices(dui: String) {
+        viewModelScope.launch {
+            try {
+                uiState = uiState.copy(isLoading = true)
+
+                val services = serviceRepository.getAllServicesByDUI(dui) ?: emptyList()
+
+                uiState = uiState.copy(isLoading = false, userServices = services)
+                Log.d(TAG, "Servicios del usuario cargados")
+            } catch (e: Exception) {
+                uiState = uiState.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    // Contratar un servicio y registrar transacción
+    fun acquireService(service: Service, dui: String) {
+        viewModelScope.launch {
+            try {
+                // Reutilizamos el repo, que convierte a Entity
+                serviceRepository.insertService(service, dui)
+
+                val transaction = Transaction(
+                    dui = dui,
+                    acquiredService = service.nombre,
+                    transactionDate = getTodayDate(),
+                    amount = service.price
+                )
+                transactionRepository.createTransaction(transaction)
+
+                Log.d(TAG, "Servicio contratado y transacción creada")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al contratar servicio", e)
+            }
+        }
+    }
+
+    private fun getTodayDate(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return formatter.format(Date())
+    }
+
+    // 🔹 extensión clara: de catálogo -> entidad persistible
+    private fun Service.toEntity(dui: String): ServiceEntity {
+        return ServiceEntity(
+            nombre = this.nombre,
+            price = this.price,
+            dui = dui,
+            isActive = true
+        )
+    }
+}
+
+
+
+/*
+class ServicesViewModel(
+    private val serviceRepository: ServiceRepository,
+    private val transactionRepository: TransactionRepository
+) : ViewModel() {
+
+    companion object {
+        private const val TAG = "servicesVM"
+    }
+
+    var uiState: ServicesUiState by mutableStateOf(ServicesUiState())
+        private set
+
     // Cargar catálogo (desde provider)
     fun loadCatalogServices() {
         uiState = uiState.copy(
@@ -106,4 +183,4 @@ class ServicesViewModel(
             isActive = true
         )
     }
-}
+}*/

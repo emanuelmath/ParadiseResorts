@@ -38,10 +38,10 @@ object CatalogProvider {
 
     // Catálogo de servicios fijo (solo para UI y lógica)
     val services = listOf(
-        Service(id = 1, nombre = "Spa Relax", dui = "Masajes y sauna", price = 30.0),
-        Service(id = 2, nombre = "Transporte VIP", dui = "Traslado privado aeropuerto-hotel", price = 50.0),
-        Service(id = 3, nombre = "Tour de la ciudad", dui = "Visita guiada por los principales lugares", price = 40.0),
-        Service(id = 4, nombre = "Desayuno buffet", dui = "Desayuno variado incluido", price = 15.0)
+        Service(id = 1, nombre = "Spa Relax", dui = "Masajes y sauna relajante individual", price = 30.0),
+        Service(id = 2, nombre = "Transporte VIP", dui = "Traslado privado aeropuerto-hotel o cualquier destion", price = 50.0),
+        Service(id = 3, nombre = "Tour de la ciudad", dui = "Visita guiada por los principales lugares turísticos de la zona", price = 40.0),
+        Service(id = 4, nombre = "Comida buffet", dui = "Comidas variadas incluido", price = 25.0)
     )
 
 }
