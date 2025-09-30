@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.paradiseresorts.data.repository.HotelRepository
 import com.example.paradiseresorts.data.repository.RoomRepository
+import com.example.paradiseresorts.domain.mappers.toModel
+import com.example.paradiseresorts.ui.classes.CatalogProvider
 import com.example.paradiseresorts.ui.classes.InformationUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -45,6 +47,13 @@ class InformationViewModel(
                 Log.e(TAG, "Error cargando info", e)
             }
         }
+    }
+
+    fun loadHotelsAndRoomsDirect() {
+        uiState = uiState.copy(
+            hotels = CatalogProvider.hotels.map { it.toModel() },
+            rooms = CatalogProvider.rooms.map { it.toModel() }
+        )
     }
 }
 
