@@ -97,7 +97,7 @@ fun HomeScreen(
                 ServicesScreen(servicesViewModel, reservationViewModel, userSessionViewModel)
             }
             composable(HomeRoute.Reservations.route) {
-                ReservationScreen(reservationViewModel)
+                ReservationScreen(userSessionViewModel,reservationViewModel)
             }
             composable(HomeRoute.Information.route) {
                 InformationScreen(informationViewModel)

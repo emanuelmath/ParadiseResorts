@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.paradiseresorts.data.database.entities.ServiceEntity
 import com.example.paradiseresorts.data.repository.ServiceRepository
 import com.example.paradiseresorts.data.repository.TransactionRepository
+import com.example.paradiseresorts.data.repository.UserRepository
 import com.example.paradiseresorts.domain.models.Service
 import com.example.paradiseresorts.domain.models.Transaction
 import com.example.paradiseresorts.ui.classes.CatalogProvider
@@ -22,7 +23,8 @@ import java.util.Locale
 
 class ServicesViewModel(
     private val serviceRepository: ServiceRepository,
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     companion object {
@@ -52,6 +54,28 @@ class ServicesViewModel(
                 Log.d(TAG, "Servicios del usuario cargados")
             } catch (e: Exception) {
                 uiState = uiState.copy(isLoading = false, error = e.message)
+            }
+        }
+    }
+
+    fun updateUserBalance(dui: String, amountToSubtract: Double, onResult: (Boolean, String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val user = userRepository.getUserByDUI(dui)
+                if (user == null) {
+                    onResult(false, "Usuario no encontrado")
+                    return@launch
+                }
+
+                if (user.balance < amountToSubtract) {
+                    onResult(false, "Saldo insuficiente")
+                    return@launch
+                }
+
+                userRepository.updateUserBalance(dui, user.balance - amountToSubtract)
+                onResult(true, "Balance actualizado correctamente")
+            } catch (e: Exception) {
+                onResult(false, "Error actualizando balance: ${e.message}")
             }
         }
     }
