@@ -8,12 +8,9 @@
 
 package com.example.paradiseresorts.ui.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,9 +47,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -115,11 +112,16 @@ fun HomeScreen(
 @Composable
 fun HomeContentScreen(
     userSessionViewModel: UserSessionViewModel,
-    homeContentViewModel: HomeContentViewModel = viewModel()
+    homeContentViewModel: HomeContentViewModel = viewModel(factory = HomeContentViewModelFactory())
 ) {
     val dui = userSessionViewModel.dui
     val uiState = homeContentViewModel.uiState
+    var showDialog by remember { mutableStateOf(false) }
+    var amountInput by remember { mutableStateOf("") }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
+    // Cargar datos al iniciar
     LaunchedEffect(dui) {
         dui?.let {
             homeContentViewModel.obtainCurrenUser(it)
@@ -128,125 +130,181 @@ fun HomeContentScreen(
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Bienvenida
-        item {
-            Text(
-                text = "Bienvenido ${uiState.currentUser?.name ?: ""}",
-                fontSize = 44.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF6A0DAD), // púrpura
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 🔹 Bienvenida
+            item {
+                Text(
+                    text = "Bienvenido ${uiState.currentUser?.name ?: ""}",
+                    fontSize = 44.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF6A0DAD), // púrpura
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
 
-        // Balance del usuario
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 160.dp), // más alta
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8E21C))
-            ) {
-                Column(
+            // Balance del usuario
+            item {
+                Card(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(24.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth()
+                        .heightIn(min = 160.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF8E21C))
                 ) {
-                    Text("Tu balance", color = Color.Black, fontWeight = FontWeight.Bold)
-
-                    val formattedBalance = remember(uiState.currentUser?.balance) {
-                        NumberFormat.getCurrencyInstance(Locale.US)
-                            .format(uiState.currentUser?.balance ?: 0.0)
-                    }
-
-                    Text(
-                        text = formattedBalance,
-                        fontSize = 64.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.Black
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Button(
-                        onClick = { /* TODO: recargar saldo */ },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(24.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.AddCircle,
-                            contentDescription = "Recargar",
-                            tint = Color.White
+                        Text("Tu balance", color = Color.Black, fontWeight = FontWeight.Bold)
+
+                        val formattedBalance = remember(uiState.currentUser?.balance) {
+                            NumberFormat.getCurrencyInstance(Locale.US)
+                                .format(uiState.currentUser?.balance ?: 0.0)
+                        }
+
+                        Text(
+                            text = formattedBalance,
+                            fontSize = 64.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.Black
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Recargar saldo", color = Color.White)
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    val card = dui?.let { homeContentViewModel.getCardForUser(it) }
+                                    if (card != null) {
+                                        showDialog = true
+                                    } else {
+                                        snackbarHostState.showSnackbar("No tienes tarjeta asociada")
+                                    }
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AddCircle,
+                                contentDescription = "Recargar",
+                                tint = Color.White
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Recargar saldo", color = Color.White)
+                        }
+                    }
+                }
+            }
+
+            // Reservas actuales
+            item {
+                Text(
+                    text = "Tus reservas actuales",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF001F54) // azul oscuro
+                )
+            }
+            if (uiState.reservationsOfUser.isNullOrEmpty()) {
+                item {
+                    Text("No tienes reservas activas", color = Color.Gray)
+                }
+            } else {
+                items(uiState.reservationsOfUser!!) { reservation ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF001F54))
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(reservation.dui, color = Color.White, fontWeight = FontWeight.Bold)
+                            Text("Expira: ${reservation.expirationDate}", color = Color.White)
+                        }
+                    }
+                }
+            }
+
+            // Servicios
+            item {
+                Text(
+                    text = "Tus servicios",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            if (uiState.servicesOfUser.isNullOrEmpty()) {
+                item {
+                    Text("No tienes servicios activos", color = Color.Gray)
+                }
+            } else {
+                items(uiState.servicesOfUser!!) { service ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF5851DB))
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(service.nombre, color = Color.White, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
         }
 
-        // Reservas actuales
-        item {
-            Text(
-                text = "Tus reservas actuales",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF001F54) // azul oscuro
-            )
-        }
-        if (uiState.reservationsOfUser.isNullOrEmpty()) {
-            item {
-                Text("No tienes reservas activas", color = Color.Gray)
-            }
-        } else {
-            items(uiState.reservationsOfUser!!) { reservation ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF001F54))
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(reservation.dui, color = Color.White, fontWeight = FontWeight.Bold)
-                        Text("Expira: ${reservation.expirationDate}", color = Color.White)
+        // Dialog de recarga de saldo
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Recargar saldo") },
+                text = {
+                    Column {
+                        Text("¿Cuánto deseas transferir de tu tarjeta?")
+                        OutlinedTextField(
+                            value = amountInput,
+                            onValueChange = { amountInput = it },
+                            label = { Text("Monto") }
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val amount = amountInput.toDoubleOrNull() ?: 0.0
+                        dui?.let {
+                            homeContentViewModel.rechargeBalance(it, amount) { success, message ->
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(message)
+                                }
+                                if (success) {
+                                    showDialog = false
+                                    amountInput = ""
+                                }
+                            }
+                        }
+                    }) {
+                        Text("Confirmar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Cancelar")
                     }
                 }
-            }
-        }
-
-        // Servicios
-        item {
-            Text(
-                text = "Tus servicios",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
             )
-        }
-        if (uiState.servicesOfUser.isNullOrEmpty()) {
-            item {
-                Text("No tienes servicios activos", color = Color.Gray)
-            }
-        } else {
-            items(uiState.servicesOfUser!!) { service ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF5851DB))
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(service.nombre, color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
         }
     }
 }
+
 

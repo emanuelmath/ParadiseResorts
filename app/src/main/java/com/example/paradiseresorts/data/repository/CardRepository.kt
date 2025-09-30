@@ -25,4 +25,8 @@ class CardRepository(private val cardDao: CardDao) {
     suspend fun verifyCurrentCardIsAvailable(todayDate: String, code: String): String? {
         return cardDao.verifyCurrentCardIsAvailable(todayDate, code)
     }
+
+    suspend fun updateCardBalance(dui: String, newBalance: Double) {
+        cardDao.updateCardBalance(dui, newBalance)
+    }
 }

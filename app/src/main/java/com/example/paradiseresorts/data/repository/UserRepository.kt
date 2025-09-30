@@ -22,4 +22,8 @@ class UserRepository(private val userDao: UserDao) {
     suspend fun getUserByPhoneNumber(phoneNumber: String): User? {
         return userDao.getUserByPhoneNumber(phoneNumber)?.toModel()
     }
+
+    suspend fun updateUserBalance(dui: String, newBalance: Double) {
+        userDao.updateUserBalance(dui, newBalance)
+    }
 }

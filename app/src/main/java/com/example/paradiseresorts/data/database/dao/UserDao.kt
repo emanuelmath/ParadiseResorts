@@ -17,4 +17,6 @@ interface UserDao {
     @Insert
     suspend fun createUser(user: UserEntity): Long
 
+    @Query("UPDATE user SET balance = :newBalance WHERE dui = :dui")
+    suspend fun updateUserBalance(dui: String, newBalance: Double)
 }
