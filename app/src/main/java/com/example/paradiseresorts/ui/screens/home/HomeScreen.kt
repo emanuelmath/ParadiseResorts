@@ -126,4 +126,10 @@ fun HomeContentScreen(
             Text("Elemento #$index", modifier = Modifier.padding(4.dp))
         }
     }
+
+    /* Mensaje de bienvenida con el username.
+    * Hacer una card para presentar el balance.
+    * Hacer una sección de reservaciones activas.
+    * Hacer una sección de servicios contratados.
+    * */
 }

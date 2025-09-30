@@ -45,13 +45,6 @@ fun AddCardDialog(
                     singleLine = true
                 )
                 Spacer(Modifier.height(8.dp))
-                /*OutlinedTextField(
-                    value = cardHolder,
-                    onValueChange = { cardHolder = it },
-                    label = { Text("Nombre del titular") },
-                    singleLine = true
-                )
-                Spacer(Modifier.height(8.dp))*/
                 OutlinedTextField(
                     value = expirationDate,
                     onValueChange = { expirationDate = it },

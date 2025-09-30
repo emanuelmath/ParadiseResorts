@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -37,7 +38,7 @@ fun TopBar(
             .padding(horizontal = 8.dp, vertical = 4.dp),
         shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = appColors.purpleColor)
+        colors = CardDefaults.cardColors(containerColor = appColors.pinkColor)
     ) {
         Row(
             modifier = Modifier
@@ -49,8 +50,8 @@ fun TopBar(
             Text(
                 text = "Paradise Resorts",
                 color = Color.White,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = FontFamily.Cursive,
+                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily.SansSerif,
                 fontSize = 26.sp
             )
 

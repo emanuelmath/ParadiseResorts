@@ -1,6 +1,7 @@
 //Este archivo contiene la estructura y funcionalidad UI de la pantalla de perfil de usuario
 package com.example.paradiseresorts.ui.screens.profile
 
+import android.widget.NumberPicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

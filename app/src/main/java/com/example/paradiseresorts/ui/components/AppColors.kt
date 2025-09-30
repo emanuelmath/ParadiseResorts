@@ -18,6 +18,12 @@ data class AppColors(
         Color(0xFFFCAF45)
     ),
 
+    //Degradado para TopBars:
+    val barGradient: List<Color> = listOf(
+        Color(0xFF5851DB),
+        Color(0xFFC13584)
+    ),
+
     //Colores individuales:
     val blueColor: Color = Color(0xFF405DE6),
     val purpleColor: Color = Color(0xFF5851DB),

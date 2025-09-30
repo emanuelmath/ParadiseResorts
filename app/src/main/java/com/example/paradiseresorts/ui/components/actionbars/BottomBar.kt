@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Room
 import androidx.compose.material.icons.filled.RoomService
 import androidx.compose.material.icons.filled.Search
@@ -87,7 +88,7 @@ fun BottomBar(
             }
             IconButton(onClick = onInformationClick) {
                 Icon(
-                    imageVector = Icons.Default.Room,
+                    imageVector = Icons.Default.Map,
                     contentDescription = "Información",
                     tint = appColors.purpleColor,
                     modifier = Modifier.size(26.dp)
