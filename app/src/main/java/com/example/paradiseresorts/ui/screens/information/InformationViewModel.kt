@@ -7,13 +7,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paradiseresorts.data.repository.HotelRepository
+import com.example.paradiseresorts.data.repository.RoomRepository
 import com.example.paradiseresorts.ui.classes.InformationUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class InformationViewModel(/*Introducir repositorios necesarios*/) : ViewModel() {
+class InformationViewModel(
+    private val hotelRepository: HotelRepository,
+    private val roomRepository: RoomRepository
+) : ViewModel() {
 
-    //Etiqueta de filtrado de logs referentes a este VM:
     companion object {
         private const val TAG = "informationVM"
     }
@@ -21,16 +25,26 @@ class InformationViewModel(/*Introducir repositorios necesarios*/) : ViewModel()
     var uiState: InformationUiState by mutableStateOf(InformationUiState())
         private set
 
-    //Función de ejemplo para refrescar información de la pantalla:
-    fun refreshInformation() {
+    fun loadHotelsAndRooms() {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
-            delay(1000) // Simulación de carga
-            uiState = uiState.copy(
-                isLoading = false,
-                infoMessage = "Información actualizada"
-            )
-            Log.d(TAG, "Información actualizada")
+            try {
+                uiState = uiState.copy(isLoading = true)
+
+                val hotels = hotelRepository.getAllHotels() ?: emptyList()
+                val rooms = roomRepository.getAllRoomsAvailable() ?: emptyList()
+
+                uiState = uiState.copy(
+                    isLoading = false,
+                    hotels = hotels,
+                    rooms = rooms
+                )
+
+                Log.d(TAG, "Hoteles y habitaciones cargados")
+            } catch (e: Exception) {
+                uiState = uiState.copy(isLoading = false, error = e.message)
+                Log.e(TAG, "Error cargando info", e)
+            }
         }
     }
 }
+

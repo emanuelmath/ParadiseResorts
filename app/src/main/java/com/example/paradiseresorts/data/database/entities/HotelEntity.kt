@@ -9,5 +9,4 @@ data class HotelEntity(
     val id: Int = 0,
     val name: String,
     val location: String
-) {
-}
+)
