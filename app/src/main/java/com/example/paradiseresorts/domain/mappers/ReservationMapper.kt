@@ -5,6 +5,7 @@ import com.example.paradiseresorts.domain.models.Reservation
 fun Reservation.toEntity(): ReservationEntity {
     return ReservationEntity(
         id = id,
+        hotelId = hotelId,
         roomId = roomId,
         dui = dui,
         entryDate = entryDate,
@@ -15,6 +16,7 @@ fun Reservation.toEntity(): ReservationEntity {
 fun ReservationEntity.toModel(): Reservation {
     return Reservation(
         id = id,
+        hotelId = hotelId,
         roomId = roomId,
         dui = dui,
         entryDate = entryDate,
