@@ -17,4 +17,8 @@ class UserSessionViewModel(private val sessionRepository: SessionRepository): Vi
             dui = sessionRepository.obtainCurrentSession()?.dui
         }
     }
+
+    fun updateDui(newDui: String) {
+        dui = newDui
+    }
 }

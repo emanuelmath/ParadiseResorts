@@ -90,6 +90,7 @@ fun AppNavHost(
         composable(route = Screen.Login.route) {
             LoginScreen(
                 loginViewModel = loginViewModel,
+                userSessionViewModel = userSessionViewModel,
                 onLoginSuccess = {
                     navController.navigate(route = Screen.Home.route) {
                         popUpTo(id = 0) { inclusive = true }

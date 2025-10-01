@@ -48,11 +48,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.example.paradiseresorts.ui.theme.LocalAppColors
+import com.example.paradiseresorts.ui.viewmodels.UserSessionViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
+    userSessionViewModel: UserSessionViewModel,
     onLoginSuccess: () -> Unit,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit
@@ -63,8 +65,11 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
 
     //Verifica si isLoggedIn es true para llevar a cabo la navegación:
-    LaunchedEffect(key1 = uiState.isLoggedIn) {
+    LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) {
+            uiState.dui?.let { dui ->
+                userSessionViewModel.updateDui(dui) // 👈 sincroniza el estado global
+            }
             onLoginSuccess()
         }
     }

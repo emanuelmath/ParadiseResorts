@@ -4,6 +4,7 @@ data class LoginUiState(
     val emailOrDUI: String = "",
     val password: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val isLoggedIn: Boolean = false
+    val isLoggedIn: Boolean = false,
+    val dui: String? = null,  // 👈 aquí guardaremos el DUI
+    val errorMessage: String? = null
 )

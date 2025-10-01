@@ -53,11 +53,6 @@ class LoginViewModel(private val userRepository: UserRepository,
                 Log.d(TAG, "Intentando login con: ${uiState.emailOrDUI}")
                 delay(1000)
 
-                // Validación contra usuario de prueba
-                //val matchesAdmin = (
-                //        (uiState.usernameOrEmail == TEST_USERNAME || uiState.usernameOrEmail == TEST_EMAIL) &&
-                //                uiState.password == TEST_PASSWORD
-                //        )
 
                 val user = if (Patterns.EMAIL_ADDRESS.matcher(uiState.emailOrDUI).matches()) {
                     userRepository.getUserByEmail(uiState.emailOrDUI)
@@ -70,6 +65,7 @@ class LoginViewModel(private val userRepository: UserRepository,
                         uiState = uiState.copy(
                             isLoading = false,
                             isLoggedIn = true,
+                            dui = user.dui,
                             errorMessage = null
                         )
                         val sessionToCreate = Session(
