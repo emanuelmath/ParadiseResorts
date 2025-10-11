@@ -137,7 +137,6 @@ class ReservationViewModel(
 
                 // Crear reservación
                 val reservation = Reservation(
-                    id = 0,
                     dui = dui,
                     hotelId = hotel.id,
                     roomId = room.id,
@@ -149,7 +148,6 @@ class ReservationViewModel(
 
                 // Crear transacción
                 val transaction = Transaction(
-                    id = 0,
                     dui = dui,
                     acquiredService = "Reservación Hotel: ${hotel.name}, Habitación: ${room.name}",
                     transactionDate = LocalDate.now().toString(),

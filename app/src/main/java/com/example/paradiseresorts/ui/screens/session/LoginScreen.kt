@@ -1,6 +1,7 @@
 //Este archivo contiene la estructura y funcionalidad de la pantalla de inicio de sesión.
 package com.example.paradiseresorts.ui.screens.session
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +55,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
-    userSessionViewModel: UserSessionViewModel,
     onLoginSuccess: () -> Unit,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit
@@ -67,9 +67,6 @@ fun LoginScreen(
     //Verifica si isLoggedIn es true para llevar a cabo la navegación:
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) {
-            uiState.dui?.let { dui ->
-                userSessionViewModel.updateDui(dui) // 👈 sincroniza el estado global
-            }
             onLoginSuccess()
         }
     }
@@ -84,6 +81,12 @@ fun LoginScreen(
                 )
             }
             loginViewModel.clearError()
+        }
+    }
+
+    LaunchedEffect(uiState.isClearingFields) {
+        if(uiState.isClearingFields) {
+            loginViewModel.cleaningFields()
         }
     }
 

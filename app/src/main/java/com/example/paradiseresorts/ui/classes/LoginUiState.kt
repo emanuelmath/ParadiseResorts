@@ -5,6 +5,7 @@ data class LoginUiState(
     val password: String = "",
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
-    val dui: String? = null,  // 👈 aquí guardaremos el DUI
-    val errorMessage: String? = null
+    val dui: String? = null,
+    val errorMessage: String? = null,
+    val isClearingFields: Boolean = false
 )

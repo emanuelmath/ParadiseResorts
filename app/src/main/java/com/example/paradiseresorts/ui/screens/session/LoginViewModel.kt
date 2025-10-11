@@ -66,7 +66,8 @@ class LoginViewModel(private val userRepository: UserRepository,
                             isLoading = false,
                             isLoggedIn = true,
                             dui = user.dui,
-                            errorMessage = null
+                            errorMessage = null,
+                            isClearingFields = true
                         )
                         val sessionToCreate = Session(
                             dui = user.dui,
@@ -115,5 +116,14 @@ class LoginViewModel(private val userRepository: UserRepository,
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         formatter.timeZone = TimeZone.getDefault()
         return formatter.format(Date())
+    }
+
+    fun cleaningFields() {
+        uiState = uiState.copy(
+            emailOrDUI = "",
+            password = "",
+            isClearingFields = false,
+            isLoggedIn = false //Evitar que se loguee luego de cerrar sesión.
+        )
     }
 }

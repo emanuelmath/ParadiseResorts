@@ -58,7 +58,7 @@ fun ServicesScreen(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val userDui = userSessionViewModel.dui
+    val userDui = userSessionViewModel.duiState.dui
 
     LaunchedEffect(userDui) {
         if (userDui != null) {

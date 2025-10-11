@@ -8,6 +8,7 @@
 
 package com.example.paradiseresorts.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -49,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -65,8 +67,7 @@ fun HomeScreen(
     userSessionViewModel: UserSessionViewModel
 ) {
     val homeNavController = rememberNavController()
-    val uiState = homeContentViewModel.uiState
-    val dui = userSessionViewModel.dui
+
 
     Scaffold(
         topBar = {
@@ -114,16 +115,22 @@ fun HomeContentScreen(
     userSessionViewModel: UserSessionViewModel,
     homeContentViewModel: HomeContentViewModel = viewModel(factory = HomeContentViewModelFactory())
 ) {
-    val dui = userSessionViewModel.dui
+    val duiState = userSessionViewModel.duiState
+    Log.d("VIENDODUI", "traje el dui: ${duiState.dui}")
     val uiState = homeContentViewModel.uiState
     var showDialog by remember { mutableStateOf(false) }
     var amountInput by remember { mutableStateOf("") }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+      LaunchedEffect(Unit) {
+          userSessionViewModel.loadSession()
+          delay(1000L)
+      }
+
     // Cargar datos al iniciar
-    LaunchedEffect(dui) {
-        dui?.let {
+    LaunchedEffect(duiState.dui) {
+        duiState.dui?.let {
             homeContentViewModel.obtainCurrenUser(it)
             homeContentViewModel.obtainCurrentReservationsOfUser(it)
             homeContentViewModel.obtainServices(it)
@@ -185,7 +192,7 @@ fun HomeContentScreen(
                         Button(
                             onClick = {
                                 scope.launch {
-                                    val card = dui?.let { homeContentViewModel.getCardForUser(it) }
+                                    val card = duiState.dui?.let { homeContentViewModel.getCardForUser(it) }
                                     if (card != null) {
                                         showDialog = true
                                     } else {
@@ -282,7 +289,7 @@ fun HomeContentScreen(
                 confirmButton = {
                     TextButton(onClick = {
                         val amount = amountInput.toDoubleOrNull() ?: 0.0
-                        dui?.let {
+                        duiState.dui?.let {
                             homeContentViewModel.rechargeBalance(it, amount) { success, message ->
                                 scope.launch {
                                     snackbarHostState.showSnackbar(message)
